@@ -5,8 +5,10 @@ services:
     image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.101408.0
     entrypoint: >
       /bin/sh -c "
-      cp /config/minato-genesis.json /data/optimism/genesis.json &&
-      geth init --state.scheme=hash --datadir=/data/optimism /data/optimism/genesis.json &&
+      if [ ! -d /data/optimism/geth/chaindata ]; then
+        cp /config/minato-genesis.json /data/optimism/genesis.json &&
+        geth init --state.scheme=hash --datadir=/data/optimism /data/optimism/genesis.json
+      fi &&
       geth --datadir=/data/optimism --http --http.corsdomain=* --http.vhosts=* 
       --http.addr=0.0.0.0 --http.api=web3,debug,eth,txpool,net,engine --ws 
       --ws.addr=0.0.0.0 --ws.port=8546 --ws.origins=* --ws.api=debug,eth,txpool,net,engine 
